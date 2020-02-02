@@ -1,0 +1,7 @@
+[Unit]
+Description=Daily Goal App
+
+[Service]
+ExecStart=java -jar /usr/local/daily-goal-app/daily-goal-app.jar
+Restart=yes
+Type=simple
