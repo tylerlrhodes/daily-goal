@@ -2,6 +2,8 @@
 Description=Daily Goal App
 
 [Service]
+User=daily-app
+Group=daily-app
 ExecStart=java -jar /usr/local/daily-goal-app/daily-goal-app.jar
 Restart=yes
 Type=simple
