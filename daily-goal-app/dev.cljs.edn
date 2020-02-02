@@ -1,0 +1,5 @@
+^{:open-url "http://localhost:8890/"}
+{:main daily-goal-app.core
+ :source-paths ["src-cljs"]
+ :output-to "resources/public/cljs-out/app.js"
+ :output-dir "resources/public/cljs-out-build"}

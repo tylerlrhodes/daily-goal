@@ -1,0 +1,54 @@
+
+---
+- hosts: web_server
+  remote_user: ubuntu
+  become: yes
+  
+  tasks:
+  - name: ping um
+    ping:
+
+  - name: install JRE
+    apt:
+      update_cache: yes
+      name: openjdk-8-jre-headless
+
+  - name: install nginx
+    apt:
+      update_cache: yes
+      name: nginx
+
+  - name: stop nginx
+    service:
+      name: nginx
+      state: stopped
+
+  - name: copy public certificate
+    copy:
+      src: artifacts/bytes.crt
+      dest: /etc/ssl/certs/bytes.crt
+      owner: root
+      group: root
+      mode: u+rw,g+r,o+r
+
+  - name: copy private certificate
+    copy:
+      src: artifacts/secure/bytes.key
+      dest: /etc/ssl/private/bytes.key
+      owner: root
+      group: root
+      mode: u+rw,g-rwx,o-rwx
+
+  - name: copy nginx config
+    copy:
+      src: artifacts/nginx-default-site
+      dest: /etc/nginx/sites-available/default
+      owner: root
+      group: root
+      mode: u+rw-x,g+r-wx,o+r-wx
+      
+  - name: ensure nginx running
+    service:
+      name: nginx
+      state: started
+
