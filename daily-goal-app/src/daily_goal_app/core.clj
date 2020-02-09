@@ -8,21 +8,29 @@
             [clojure.data.json :as json])
   (:gen-class))
 
-
-
+(def index-page "<html><head><title>Daily App</title></head><body>
+                 <div id=\"app\" xsrf=\"{xsrf}\">
+                 <h1>Daily App</h1></div>
+                 <script src=\"/cljs-out/app.js\" type=\"text/javascript\"></script>
+                 </body></html>")
 
 (defn index-get [request]
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body "<html><head><title>Daily App</title></head><body><h1>Daily App</h1>
-          <script src=\"/cljs-out/app.js\" type=\"text/javascript\"></script>
-          </body></html>"})
+   :body (clojure.string/replace index-page #"\{xsrf\}"
+                                 (::csrf/anti-forgery-token request))})
              
+(defn login-post [request]
+  {:status 200
+   :headers {"Content-Type" "application/json"}
+   :session {:logged-in true}})
+   
 ;; Routes
 
 (def routes
   (route/expand-routes
-   #{["/" :get index-get :route-name :index-get]}))
+   #{["/" :get index-get :route-name :index-get]
+     ["/login" :post login-post :route-name :login-post]}))
 
 (def service-map
   {::http/routes routes
