@@ -1,4 +1,13 @@
+terraform {
+  backend "remote" {
+    organization = "FairfieldBytes"
 
+    workspaces {
+      name = "daily-app"
+    }
+  }
+}
+    
 provider "aws" {
   profile = "default"
   region  = "us-east-1"
@@ -7,11 +16,12 @@ provider "aws" {
 locals {
   domain_name = "fairfieldbytes.com"
   record_name = "daily-dev"
+  pub_key_path = "artifacts/daily_ec2_dev_key.pub"
 }
 
 resource "aws_key_pair" "generated_key" {
   key_name   = "dev_key"
-  public_key = file("artifacts/daily_ec2_dev_key.pub")
+  public_key = file(local.pub_key_path)
 }
 
 resource "aws_vpc" "vpc" {
