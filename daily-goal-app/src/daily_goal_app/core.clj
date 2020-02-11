@@ -8,6 +8,9 @@
             [clojure.data.json :as json])
   (:gen-class))
 
+;; loggin configuration - Logback
+;; http://logback.qos.ch/manual/index.html
+
 (def index-page "<html><head><title>Daily App</title></head><body>
                  <div id=\"app\" xsrf=\"{xsrf}\">
                  <h1>Daily App</h1></div>
@@ -19,7 +22,17 @@
    :headers {"Content-Type" "text/html"}
    :body (clojure.string/replace index-page #"\{xsrf\}"
                                  (::csrf/anti-forgery-token request))})
-             
+(defn test-login [request]
+  (if (:logged-in (:session request))
+    {:status 200
+     :headers {"Content-Type" "application/json"}
+     :session {:logged-in true}
+     :body "{'abc': 'def'}"}
+    {:status 403
+     :headers {"Content-Type" "application/json"}
+     :session {:logged-in false}
+     :body "{'zzz': 'zzz'}"}))
+
 (defn login-post [request]
   {:status 200
    :headers {"Content-Type" "application/json"}
