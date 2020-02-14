@@ -7,24 +7,54 @@ Simple
 Supports multiple users
 
 
+# How should the screen(s) look:
+
+1. Login
+
+2. Goal screen
+
+   - optimize for phone
+   - optimize for checking off *today's* goal(s)
+   - easily add a transaction
+   - Easy to see:
+     - balance
+     - the days goals
+   - Possible to see (requires scrolling):
+     - goals in the future and past
+     - transaction history
+   - Possible to add:
+     - new goals
+     -
+
+# Adding stuff:
+  - add an item (routine, milestone, project, context)
+    - routine is a daily activity that repeats on set days
+    - milestone is an accomplishment towards a project
+    - project is a finishable goal within a context
+    - context is the given context activites are completed within
+      - framework, or "metaphysical" context
+      - eg., "author", "software engineering", "studies"
+
+
+# How to store information
+
+- flat file per user
+  - goal definitions (most recurring)
+  - transactions
+  - aggregate statistics in file
+  - daily goals schedule
+  - daily goal completions
+  
 # Software Statement
 
-The program will support the accomplishment of larger goals, within a
-metaphysical system, through the dialy application and completion of
-sub-goals.
+This software is designed to help the user accomplish larger goals
+within a given framework through the development of routines and
+budget tracking.
 
-Specifically, while the system and larger goals are "implied", the
-software will be tailored to the easy creation of subgoals, providing
-a simple experience whereby the user has to do a very minimal amount
-of data entry.
-
-The goals screen exists simultaneously as a heads-up-display, and
-input mechanism, where the user can mark goals complete, add new
-goals, or enter a expense or income item.
-
-It is crucial that the input process is simple and works well
-primarily on mobile phones, as a web application.
-
+For instance, to be an author, a goal would be to write a book, a
+milestone would be a chapter of the book, and the routine would be
+writing 200 words a day - while having enough money for rent and
+lunch.
 
 # Features
 
