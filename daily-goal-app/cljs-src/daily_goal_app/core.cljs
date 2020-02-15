@@ -27,6 +27,39 @@
 (defn f []
   (print "dura"))
 
+(rum/defcs login-component <
+  (rum/local "" ::username)
+  (rum/local "" ::password)
+  (rum/local "" ::status-msg)
+  [state]
+  (let [username (::username state)
+        password (::password state)
+        status-msg (::status-msg state)
+        handle-login
+        (fn [resp]
+          (js/console.log resp))]
+    [:div
+     [:h1 "Login"]
+     [:hr]
+     [:form
+      [:label "Username:"]
+      [:input
+       {:type "text"
+        :on-change (fn [evt]
+                     (reset! username (.. evt -target -value)))}]
+      [:br]
+      [:label "Password:"]
+      [:input
+       {:type "text"
+        :on-change (fn [evt]
+                     (reset! password (.. evt -target -value)))}]]
+      [:button
+       {:class "label"
+        :on-click #(login @username @password handle-login)}
+       "Login"]
+      [:br]
+      [:span "Status: " @status-msg]]))
 
+(rum/mount (login-component nil) (dom/getElement "app"))
             
 

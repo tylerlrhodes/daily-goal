@@ -36,13 +36,15 @@
 (defn login-post [request]
   {:status 200
    :headers {"Content-Type" "application/json"}
-   :session {:logged-in true}})
+   :session (merge (:session request) {:logged-in true})
+   :body "{'a': 'b'}"})
    
 ;; Routes
 
 (def routes
   (route/expand-routes
    #{["/" :get index-get :route-name :index-get]
+     ["/test-login" :any test-login :route-name :test-login]
      ["/login" :post login-post :route-name :login-post]}))
 
 (def service-map
