@@ -37,7 +37,7 @@
   {:status 200
    :headers {"Content-Type" "application/json"}
    :session (merge (:session request) {:logged-in true})
-   :body "{'a': 'b'}"})
+   :body "{\"a\": \"b\"}"})
    
 ;; Routes
 

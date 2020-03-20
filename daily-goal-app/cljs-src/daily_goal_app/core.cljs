@@ -21,7 +21,7 @@
     :headers
     {"X-XSRF-Token" (get-token)}
     :format (ajax/json-request-format)
-    :response-format (ajax/json-response-format {:keywords? true})}))
+    :response-format (ajax/json-response-format {:keywords? false})}))
 
 
 (defn f []
