@@ -1,6 +1,7 @@
 (ns daily-goal-app.data
   (:require [clojure.java [io :as io]]
             [cognitect.aws.client.api :as aws]
+;;            [clojure.core.cache.wrapped :as c]
             [taoensso.nippy :as nippy])
   (:gen-class))
 
@@ -19,7 +20,6 @@
     (io/copy stream xout)
     (.toByteArray xout)))
 
-
 (defn get-bytes [x]
   (nippy/freeze x))
 
@@ -29,7 +29,9 @@
 
 (def s3 (aws/client {:api :s3}))
 
-(def bucket-name "daily-app-local-bucket-store")
+(def bucket-name
+  (or (System/getenv "daily_goal_app_s3_bucket")
+      "daily-app-local-bucket-store"))
 
 (defn store-record [rec]
   (aws/invoke s3 {:op :PutObject

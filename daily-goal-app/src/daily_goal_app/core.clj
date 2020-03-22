@@ -5,6 +5,7 @@
             [io.pedestal.http.csrf :as csrf]
             [io.pedestal.http.ring-middlewares :as middlewares]
             [ring.middleware.session.cookie :as cookie]
+            [clojure.pprint :as pprint]
             [clojure.data.json :as json])
   (:gen-class))
 
@@ -17,21 +18,28 @@
                  <script src=\"/cljs-out/app.js\" type=\"text/javascript\"></script>
                  </body></html>")
 
+;; request handling
+;; - always merge the session (new values overwrite old)
+;; - 
 (defn index-get [request]
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (clojure.string/replace index-page #"\{xsrf\}"
                                  (::csrf/anti-forgery-token request))})
 (defn test-login [request]
+  (pprint/pprint (:body request))
+  (if (:json-params request)
+    (pprint/pprint (:json-params request))
+    (pprint/pprint request))
   (if (:logged-in (:session request))
     {:status 200
      :headers {"Content-Type" "application/json"}
-     :session {:logged-in true}
-     :body "{'abc': 'def'}"}
+     :session (merge (:session request) {:logged-in true})
+     :body (json/json-str {:logged-in true})}
     {:status 403
      :headers {"Content-Type" "application/json"}
      :session {:logged-in false}
-     :body "{'zzz': 'zzz'}"}))
+     :body (json/json-str {:logged-in false})}))
 
 (defn login-post [request]
   {:status 200
@@ -44,7 +52,7 @@
 (def routes
   (route/expand-routes
    #{["/" :get index-get :route-name :index-get]
-     ["/test-login" :any test-login :route-name :test-login]
+     ["/test-login" :any [test-login] :route-name :test-login]
      ["/login" :post login-post :route-name :login-post]}))
 
 (def service-map
@@ -67,6 +75,7 @@
   [service-map]
   (-> service-map
       (http/default-interceptors)
+;;      (update ::http/interceptors conj (body-params/body-params))
       (update ::http/interceptors conj (middlewares/file-info))))
 
 (defn start []
