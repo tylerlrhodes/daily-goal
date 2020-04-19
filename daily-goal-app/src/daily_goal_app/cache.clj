@@ -25,15 +25,7 @@
 
 (set! *warn-on-reflection* true)
 
-(defn through-cache-c
-  "The basic hit/miss logic for the cache system.  Like through but always has
-  the cache argument in the first position for easier use with swap! etc."
-  ([cache item] (through-cache-c cache item default-wrapper-fn identity))
-  ([cache item value-fn] (through-cache-c cache item default-wrapper-fn value-fn))
-  ([cache item wrap-fn value-fn]
-   (if (clojure.core.cache/has? cache item)
-     (clojure.core.cache/hit cache item)
-     (clojure.core.cache/miss cache item (wrap-fn #(value-fn %) item)))))
+
 
 (defn lookup
   "Retrieve the value associated with `e` if it exists, else `nil` in
@@ -47,6 +39,16 @@
    (c/lookup @cache-atom e not-found)))
 
 (def ^{:private true} default-wrapper-fn #(%1 %2))
+
+(defn through-cache-c
+  "The basic hit/miss logic for the cache system.  Like through but always has
+  the cache argument in the first position for easier use with swap! etc."
+  ([cache item] (through-cache-c cache item default-wrapper-fn identity))
+  ([cache item value-fn] (through-cache-c cache item default-wrapper-fn value-fn))
+  ([cache item wrap-fn value-fn]
+   (if (clojure.core.cache/has? cache item)
+     (clojure.core.cache/hit cache item)
+     (clojure.core.cache/miss cache item (wrap-fn #(value-fn %) item)))))
 
 (defn lookup-or-miss
   "Retrieve the value associated with `e` if it exists, else compute the

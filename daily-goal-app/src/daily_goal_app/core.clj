@@ -6,6 +6,7 @@
             [io.pedestal.http.ring-middlewares :as middlewares]
             [ring.middleware.session.cookie :as cookie]
             [clojure.pprint :as pprint]
+            [ring.middleware.cors :as cors]
             [clojure.data.json :as json])
   (:gen-class))
 
@@ -26,6 +27,7 @@
    :headers {"Content-Type" "text/html"}
    :body (clojure.string/replace index-page #"\{xsrf\}"
                                  (::csrf/anti-forgery-token request))})
+
 (defn test-login [request]
   (pprint/pprint (:body request))
   (if (:json-params request)
@@ -40,6 +42,13 @@
      :headers {"Content-Type" "application/json"}
      :session {:logged-in false}
      :body (json/json-str {:logged-in false})}))
+
+;; login flow:
+;; * if the user is not setup, flow to registration
+;; * if the user is setup, authorize
+;;    * fetch data
+;;    * if invalid password return to login with error message
+;;
 
 (defn login-post [request]
   {:status 200
@@ -65,6 +74,7 @@
                            :script-src
                            "* 'unsafe-inline' 'unsafe-eval'"}}
    ::http/enable-csrf {}
+   ::http/allowed-origins {:creds true :allowed-origins (constantly true)}
    ::http/resource-path "/public"
    ::http/file-path "target/public"
    ::http/enable-session {:store (cookie/cookie-store {:key "a 16-byte secret"})

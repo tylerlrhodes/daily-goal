@@ -79,20 +79,6 @@ resource "aws_security_group" "sec_grp" {
   }
 }
 
-resource "aws_instance" "web_server" {
-  ami           = "ami-01b0d3176b3d530ad"
-  instance_type = "t3.nano"
-  subnet_id = aws_subnet.subnet.id
-  associate_public_ip_address = true
-  key_name      = "${aws_key_pair.generated_key.key_name}"
-  vpc_security_group_ids = [aws_security_group.sec_grp.id]
-  depends_on = ["aws_internet_gateway.gw"]
-  tags = {
-    role = "web"
-    env = "dev"
-  }
-}
-
 data "aws_route53_zone" "ffb_zone" {
   name = local.domain_name
 }
@@ -104,4 +90,89 @@ resource "aws_route53_record" "daily_dev_dns" {
   ttl = "1"
   records = [aws_instance.web_server.public_ip]
 }
+
+
+resource "aws_s3_bucket" "bucket_store" {
+  bucket = "daily-app-development-bucket-store"
+  acl    = "private"
+
+  tags = {
+    Name        = "Daily App Development Bucket Store"
+    Environment = "Development"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "s3_public_block" {
+  bucket = "${aws_s3_bucket.bucket_store.id}"
+
+  block_public_acls = true
+  block_public_policy = true
+  ignore_public_acls = true
+  restrict_public_buckets = true
+}
+
+resource "aws_iam_role" "ec2_s3_access_role" {
+  name = "s3-role"
+  assume_role_policy =<<EOT
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Action": "sts:AssumeRole",
+     "Principal": {
+       "Service": "ec2.amazonaws.com"
+     },
+     "Effect": "Allow",
+     "Sid": ""
+   }
+ ]
+}
+EOT
+}
+
+resource "aws_iam_policy" "s3_policy" {
+  name = "ec2-access-policy"
+  description = "Policy for use with IAM role and EC2"
+  policy =<<EOT
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": "${aws_s3_bucket.bucket_store.arn}"
+        }
+    ]
+}
+EOT
+}
+
+resource "aws_iam_policy_attachment" "attach-policy" {
+  name = "attach-policy"
+  roles = [aws_iam_role.ec2_s3_access_role.name]
+  policy_arn = aws_iam_policy.s3_policy.arn
+}
+
+resource "aws_iam_instance_profile" "iam_profile" {
+  name = "iam_profile"
+  role = aws_iam_role.ec2_s3_access_role.name
+}
+
+
+resource "aws_instance" "web_server" {
+  ami           = "ami-01b0d3176b3d530ad"
+  instance_type = "t3.nano"
+  subnet_id = aws_subnet.subnet.id
+  associate_public_ip_address = true
+  key_name      = aws_key_pair.generated_key.key_name
+  vpc_security_group_ids = [aws_security_group.sec_grp.id]
+  iam_instance_profile = aws_iam_instance_profile.iam_profile.name
+  depends_on = [aws_internet_gateway.gw]
+  tags = {
+    role = "web"
+    env = "dev"
+  }
+}
+
+
 

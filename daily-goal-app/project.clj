@@ -14,6 +14,7 @@
                  [com.taoensso/nippy "2.14.0"]
                  [org.clojure/data.json "0.2.7"]
                  [org.clojure/core.cache "0.8.2"]
+                 [ring-cors/ring-cors "0.1.13"]
                  [org.slf4j/slf4j-simple "1.7.28"]]
   :source-paths ["src" "cljs-src"]
   :profiles
