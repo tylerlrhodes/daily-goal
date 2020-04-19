@@ -7,15 +7,25 @@
   tasks:
   - name: ping um
     ping:
-
+    
   - name: install JRE
     apt:
       update_cache: yes
+      allow_unauthenticated: yes
       name: openjdk-8-jre-headless
 
+  - name: set env vars
+    copy:
+      src: artifacts/dev-environment
+      dest: /etc/environment
+      owner: root
+      group: root
+      mode: u+rw,g+r,o+r
+      
   - name: install nginx
     apt:
       update_cache: yes
+      allow_unauthenticated: yes
       name: nginx
 
   - name: stop nginx

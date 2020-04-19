@@ -95,7 +95,6 @@ resource "aws_route53_record" "daily_dev_dns" {
 resource "aws_s3_bucket" "bucket_store" {
   bucket = "daily-app-development-bucket-store"
   acl    = "private"
-
   tags = {
     Name        = "Daily App Development Bucket Store"
     Environment = "Development"
@@ -160,7 +159,7 @@ resource "aws_iam_instance_profile" "iam_profile" {
 
 
 resource "aws_instance" "web_server" {
-  ami           = "ami-01b0d3176b3d530ad"
+  ami           = "ami-085925f297f89fce1" #"ami-01b0d3176b3d530ad"
   instance_type = "t3.nano"
   subnet_id = aws_subnet.subnet.id
   associate_public_ip_address = true
