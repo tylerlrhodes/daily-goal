@@ -43,7 +43,7 @@
 
   - name: copy private certificate
     copy:
-      src: artifacts/secure/bytes.key
+      src: artifacts/bytes.key
       dest: /etc/ssl/private/bytes.key
       owner: root
       group: root
