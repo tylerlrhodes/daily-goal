@@ -93,9 +93,10 @@
       owner: root
       group: root
       mode: u+rw-x,g+r-wx,o+r-wx
-
+      
   - name: start daily app service
     systemd:
       state: restarted
+      enabled: yes
       daemon_reload: yes
       name: daily-goal-app

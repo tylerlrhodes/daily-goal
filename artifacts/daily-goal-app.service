@@ -7,3 +7,6 @@ Group=daily-app
 ExecStart=/usr/bin/java -jar /usr/local/daily-goal-app/daily-goal-app.jar
 Restart=always
 Type=simple
+
+[Install]
+RequiredBy = multi-user.target

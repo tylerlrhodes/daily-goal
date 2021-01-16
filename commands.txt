@@ -5,3 +5,8 @@ ssh -o StrictHostKeyChecking=no -i artifacts/secure/daily_ec2_dev_key ubuntu@dai
 
 
 ansible-playbook --private-key ../artifacts/secure/daily_ec2_dev_key -u ubuntu -i /usr/local/bin/terraform-inventory ../dev-playbook.yaml
+
+
+docker run -it --rm --name certbot             -v "/etc/letsencrypt:/etc/letsencrypt"             -v "/var/lib/letsencrypt:/var/lib/letsencrypt"  -v "/home/tyler/.aws:/root/.aws"           certbot/dns-route53  certonly --dns-route53 -d *.fairfieldbytes.com
+
+
